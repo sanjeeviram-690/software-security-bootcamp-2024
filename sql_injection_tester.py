@@ -1,10 +1,8 @@
 import sqlite3
 
-# Setup a sample database for demonstration
-conn = sqlite3.connect(":memory:")  # In-memory database for testing
+conn = sqlite3.connect(":memory:") 
 cursor = conn.cursor()
 
-# Create a sample table
 cursor.execute("""
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -13,7 +11,6 @@ CREATE TABLE users (
 )
 """)
 
-# Insert some dummy data
 cursor.executemany("""
 INSERT INTO users (username, password)
 VALUES (?, ?)
@@ -21,7 +18,6 @@ VALUES (?, ?)
 
 conn.commit()
 
-# Vulnerable query function
 def vulnerable_login(input_username, input_password):
     query = f"SELECT * FROM users WHERE username = '{input_username}' AND password = '{input_password}'"
     print(f"Executing query: {query}")
@@ -31,7 +27,6 @@ def vulnerable_login(input_username, input_password):
         print(f"Error during execution: {e}")
         return []
 
-# Test for SQL injection using uploaded payloads
 def test_payloads(file_path):
     print("\nStarting SQL Injection tests...\n")
     with open(file_path, "r") as payloads_file:
@@ -39,13 +34,12 @@ def test_payloads(file_path):
 
     for payload in payloads:
         print(f"Testing payload: {payload}")
-        results = vulnerable_login(payload, "any_password")  # Testing username injection
+        results = vulnerable_login(payload, "any_password")
         if results:
             print(f"Payload succeeded! Retrieved rows: {results}\n")
         else:
             print("Payload failed.\n")
 
-# Main program
 def main():
     file_path = "payloads.txt"
 
